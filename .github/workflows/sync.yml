@@ -1,0 +1,29 @@
+#https://github.com/marketplace/actions/hub-mirror-action
+name: syncToGitee
+on:
+  push:
+    branches:
+      - master
+jobs:
+  repo-sync:
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/master' &&
+      (
+        contains(github.event.head_commit.message, 'clear') ||
+        contains(github.event.head_commit.message, 'history')
+      )
+
+    steps:
+      - name: Mirror the Github organization repos to Gitee.
+        uses: Yikun/hub-mirror-action@master
+
+        with:
+          src: github/farfarfun
+          dst: gitee/farfarfun
+          dst_key: ${{ secrets.GITEE_RSA_PRIVATE_KEY }}
+          dst_token: ${{ secrets.GITEE_TOKEN }}
+          account_type: org
+          force_update: true
+          static_list: 'funread-cache'
