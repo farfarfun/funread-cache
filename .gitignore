@@ -3,6 +3,9 @@
 .run/
 logs/
 *.log
+__pycache__/
+*.pyc
+.venv/
 
 # 本地数据库与压缩包不进版本管理，确需版本化走 Git LFS
 *.db
