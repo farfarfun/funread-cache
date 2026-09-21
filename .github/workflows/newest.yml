@@ -4,11 +4,8 @@ on:
   push:
     branches: [master]
     
-permissions: 
-  contents: write
-
 jobs:
-  sync:
+  validate:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -17,25 +14,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Git User
+      - name: Validate snapshot
         run: |
-          git config user.name "GitHub Action"
-          git config user.email "niuliangtao@gmail.com"
+          python - <<'PY'
+          import json
+          from pathlib import Path
 
-      - name: Update Test Branch
-        run: |
-          git checkout master
-          git fetch origin
-          git checkout master
-          git pull
-          #git tag -d $(git tag -l) || true
-          #git fetch
-          #git push origin --delete $(git tag -l)
-          #git tag -d $(git tag -l) || true
-          git checkout --orphan latest_branch
-          git add -A
-          git commit -am "clear history"
-          git branch -D master
-          git branch -m master
-          git push -f origin master
-          git push --set-upstream origin master
+          for path in Path("funread").rglob("*.json"):
+              json.loads(path.read_text(encoding="utf-8"))
+          print("JSON snapshots are valid")
+          PY
