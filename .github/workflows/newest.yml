@@ -14,13 +14,5 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Validate snapshot
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-
-          for path in Path("funread").rglob("*.json"):
-              json.loads(path.read_text(encoding="utf-8"))
-          print("JSON snapshots are valid")
-          PY
+      - name: Validate repository
+        run: python -m unittest discover -s tests
